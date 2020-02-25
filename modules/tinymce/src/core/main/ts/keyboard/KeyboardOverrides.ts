@@ -29,7 +29,9 @@ const registerKeyboardOverrides = (editor: Editor) => {
 };
 
 const setup = (editor: Editor): void => {
-  Rtc.ignore(editor, () => registerKeyboardOverrides(editor));
+  if (!Rtc.isRtc(editor)) {
+    registerKeyboardOverrides(editor);
+  }
 };
 
 export default {
