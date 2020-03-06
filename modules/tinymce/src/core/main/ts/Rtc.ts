@@ -35,6 +35,7 @@ interface RtcRuntimeApi {
   setContent: (node: Node) => void;
   insertContent: (node: Node) => void;
   getSelectedContent: () => Node | null;
+  getRawModel: () => any;
   isRemote: boolean;
 }
 
@@ -53,13 +54,20 @@ interface RtcAdaptor {
     ignore: (locks: Locks, callback: () => void) => void
     extra: (undoManager: UndoManager, index: Index, callback1: () => void, callback2: () => void) => void
   };
-  applyFormat: (format: string, vars?: Record<string, string>, node?: DomNode | RangeLikeObject) => void;
-  removeFormat: (name: string, vars?: Record<string, string>, node?: DomNode | Range) => void;
-  toggleFormat: (formats: FormatRegistry, name: string, vars: Record<string, string>, node: DomNode) => void;
-  getContent: (args: GetContentArgs, format: ContentFormat) => Content;
-  setContent: (content: Content, args: SetContentArgs) => Content;
-  insertContent: (value: string, details) => void;
-  getSelectedContent: (format: ContentFormat, args) => string;
+  formatter: {
+    applyFormat: (format: string, vars?: Record<string, string>, node?: DomNode | RangeLikeObject) => void;
+    removeFormat: (name: string, vars?: Record<string, string>, node?: DomNode | Range) => void;
+    toggleFormat: (formats: FormatRegistry, name: string, vars: Record<string, string>, node: DomNode) => void;
+  };
+  editor: {
+    getContent: (args: GetContentArgs, format: ContentFormat) => Content;
+    setContent: (content: Content, args: SetContentArgs) => Content;
+    insertContent: (value: string, details) => void;
+    getSelectedContent: (format: ContentFormat, args) => string;
+  };
+  raw: {
+    getModel: () => Option<any>
+  };
 }
 
 interface RtcPluginApi {
@@ -95,13 +103,20 @@ const makePlainAdaptor = (editor: Editor): RtcAdaptor => ({
     ignore: (locks, callback) => Operations.ignore(locks, callback),
     extra: (undoManager, index, callback1, callback2) => Operations.extra(editor, undoManager, index, callback1, callback2)
   },
-  applyFormat: (name, vars?, node?) => ApplyFormat.applyFormat(editor, name, vars, node),
-  removeFormat: (name, vars, node) => RemoveFormat.remove(editor, name, vars, node),
-  toggleFormat: (formats, name, vars, node) => ToggleFormat.toggle(editor, formats, name, vars, node),
-  getContent: (args, format) =>  getContentInternal(editor, args, format),
-  setContent: (content, args) => setContentInternal(editor, content, args),
-  insertContent: (value, details) => insertHtmlAtCaret(editor, value, details),
-  getSelectedContent: (format, args) => getSelectedContentInternal(editor, format, args)
+  formatter: {
+    applyFormat: (name, vars?, node?) => ApplyFormat.applyFormat(editor, name, vars, node),
+    removeFormat: (name, vars, node) => RemoveFormat.remove(editor, name, vars, node),
+    toggleFormat: (formats, name, vars, node) => ToggleFormat.toggle(editor, formats, name, vars, node),
+  },
+  editor: {
+    getContent: (args, format) =>  getContentInternal(editor, args, format),
+    setContent: (content, args) => setContentInternal(editor, content, args),
+    insertContent: (value, details) => insertHtmlAtCaret(editor, value, details),
+    getSelectedContent: (format, args) => getSelectedContentInternal(editor, format, args)
+  },
+  raw: {
+    getModel: () => Option.none()
+  }
 });
 
 const makeRtcAdaptor = (tinymceEditor: Editor, rtcEditor: RtcRuntimeApi): RtcAdaptor => {
@@ -131,38 +146,45 @@ const makeRtcAdaptor = (tinymceEditor: Editor, rtcEditor: RtcRuntimeApi): RtcAda
       ignore: unsupported,
       extra: unsupported
     },
-    applyFormat: (name, vars, _node) => rtcEditor.applyFormat(name, defaultVars(vars)),
-    removeFormat: (name, vars, _node) => rtcEditor.removeFormat(name, defaultVars(vars)),
-    toggleFormat: (_formats, name, vars, _node) => rtcEditor.toggleFormat(name, defaultVars(vars)),
-    getContent: (args, format) => {
-      if (isSupportedContentFormat(format)) {
-        const fragment = rtcEditor.getContent();
-        const serializer = Serializer({ inner: true });
+    formatter: {
+      applyFormat: (name, vars, _node) => rtcEditor.applyFormat(name, defaultVars(vars)),
+      removeFormat: (name, vars, _node) => rtcEditor.removeFormat(name, defaultVars(vars)),
+      toggleFormat: (_formats, name, vars, _node) => rtcEditor.toggleFormat(name, defaultVars(vars)),
+    },
+    editor: {
+      getContent: (args, format) => {
+        if (isSupportedContentFormat(format)) {
+          const fragment = rtcEditor.getContent();
+          const serializer = Serializer({ inner: true });
 
-        FilterNode.filter(tinymceEditor.serializer.getNodeFilters(), tinymceEditor.serializer.getAttributeFilters(), fragment);
+          FilterNode.filter(tinymceEditor.serializer.getNodeFilters(), tinymceEditor.serializer.getAttributeFilters(), fragment);
 
-        return serializer.serialize(fragment);
-      } else {
-        return makePlainAdaptor(tinymceEditor).getContent(args, format);
+          return serializer.serialize(fragment);
+        } else {
+          return makePlainAdaptor(tinymceEditor).editor.getContent(args, format);
+        }
+      },
+      getSelectedContent: (format, args) => {
+        if (isSupportedContentFormat(format)) {
+          const fragment = rtcEditor.getSelectedContent();
+          const serializer = Serializer({});
+          return serializer.serialize(fragment);
+        } else {
+          return makePlainAdaptor(tinymceEditor).editor.getSelectedContent(format, args);
+        }
+      },
+      setContent: (content, _args) => {
+        const fragment = isTreeNode(content) ? content : tinymceEditor.parser.parse(content, { isRootContent: true, insert: true });
+        rtcEditor.setContent(fragment);
+        return content;
+      },
+      insertContent: (value, _details) => {
+        const fragment = isTreeNode(value) ? value : tinymceEditor.parser.parse(value, { insert: true });
+        rtcEditor.insertContent(fragment);
       }
     },
-    getSelectedContent: (format, args) => {
-      if (isSupportedContentFormat(format)) {
-        const fragment = rtcEditor.getSelectedContent();
-        const serializer = Serializer({});
-        return serializer.serialize(fragment);
-      } else {
-        return makePlainAdaptor(tinymceEditor).getSelectedContent(format, args);
-      }
-    },
-    setContent: (content, _args) => {
-      const fragment = isTreeNode(content) ? content : tinymceEditor.parser.parse(content, { isRootContent: true, insert: true });
-      rtcEditor.setContent(fragment);
-      return content;
-    },
-    insertContent: (value, _details) => {
-      const fragment = isTreeNode(value) ? value : tinymceEditor.parser.parse(value, { insert: true });
-      rtcEditor.insertContent(fragment);
+    raw: {
+      getModel: () => Option.some(rtcEditor.getRawModel())
     }
   };
 };
@@ -231,29 +253,29 @@ export const extra = (editor: Editor, undoManager: UndoManager, index: Index, ca
 };
 
 export const applyFormat = (editor: Editor, name: string, vars?: Record<string, string>, node?: DomNode | RangeLikeObject): void => {
-  (editor as RtcEditor).rtcInstance.applyFormat(name, vars, node);
+  (editor as RtcEditor).rtcInstance.formatter.applyFormat(name, vars, node);
 };
 
 export const removeFormat = (editor: Editor, name: string, vars?: Record<string, string>, node?: DomNode | Range) => {
-  (editor as RtcEditor).rtcInstance.removeFormat(name, vars, node);
+  (editor as RtcEditor).rtcInstance.formatter.removeFormat(name, vars, node);
 };
 
 export const toggleFormat = (editor: Editor, formats: FormatRegistry, name: string, vars: Record<string, string>, node: DomNode): void => {
-  (editor as RtcEditor).rtcInstance.toggleFormat(formats, name, vars, node);
+  (editor as RtcEditor).rtcInstance.formatter.toggleFormat(formats, name, vars, node);
 };
 
 export const getContent = (editor: Editor, args: GetContentArgs, format: ContentFormat): Content => {
-  return (editor as RtcEditor).rtcInstance.getContent(args, format);
+  return (editor as RtcEditor).rtcInstance.editor.getContent(args, format);
 };
 
 export const setContent = (editor: Editor, content: Content, args: SetContentArgs): Content => {
-  return (editor as RtcEditor).rtcInstance.setContent(content, args);
+  return (editor as RtcEditor).rtcInstance.editor.setContent(content, args);
 };
 
 export const insertContent = (editor: Editor, value: string, details): void => {
-  return (editor as RtcEditor).rtcInstance.insertContent(value, details);
+  return (editor as RtcEditor).rtcInstance.editor.insertContent(value, details);
 };
 
 export const getSelectedContent = (editor: Editor, format: ContentFormat, args): string => {
-  return (editor as RtcEditor).rtcInstance.getSelectedContent(format, args);
+  return (editor as RtcEditor).rtcInstance.editor.getSelectedContent(format, args);
 };

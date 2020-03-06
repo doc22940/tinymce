@@ -1,6 +1,6 @@
 {
   "name": "@rtc/tinymce",
-  "version": "5.3.0-rtc-build.0",
+  "version": "5.3.0-rtc-build.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/tinymce/tinymce"
