@@ -18,7 +18,7 @@ export interface ReadOnlyData {
   readonly: boolean;
 }
 
-const ReadOnlyDataSchema = ValueSchema.objOf([
+export const ReadOnlyDataSchema = ValueSchema.objOf([
   FieldSchema.strictBoolean('readonly')
 ]);
 
@@ -35,7 +35,7 @@ const broadcastReadonly = (uiComponents: RenderUiComponents, readonly: boolean) 
   uiComponents.uiMothership.broadcastOn([ ReadOnlyChannel ], { readonly });
 };
 
-const toggleToReadOnly = (uiComponents: RenderUiComponents, readonly: boolean) => {
+export const toggleToReadOnly = (uiComponents: RenderUiComponents, readonly: boolean) => {
   const outerContainer = uiComponents.outerContainer;
 
   broadcastReadonly(uiComponents, readonly);
@@ -49,7 +49,7 @@ const toggleToReadOnly = (uiComponents: RenderUiComponents, readonly: boolean) =
   });
 };
 
-const setupReadonlyModeSwitch = (editor: Editor, uiComponents: RenderUiComponents) => {
+export const setupReadonlyModeSwitch = (editor: Editor, uiComponents: RenderUiComponents) => {
   editor.on('init', () => {
     // Force an update of the ui components disabled states if in readonly mode
     if (editor.readonly) {
@@ -64,7 +64,7 @@ const setupReadonlyModeSwitch = (editor: Editor, uiComponents: RenderUiComponent
   }
 };
 
-const receivingConfig = (): Behaviour.NamedConfiguredBehaviour<any, any> => {
+export const receivingConfig = (): Behaviour.NamedConfiguredBehaviour<any, any> => {
   return Receiving.config({
     channels: {
       [ReadOnlyChannel]: {
@@ -75,11 +75,4 @@ const receivingConfig = (): Behaviour.NamedConfiguredBehaviour<any, any> => {
       }
     }
   });
-};
-
-export default {
-  ReadOnlyDataSchema,
-  toggleToReadOnly,
-  setupReadonlyModeSwitch,
-  receivingConfig
 };

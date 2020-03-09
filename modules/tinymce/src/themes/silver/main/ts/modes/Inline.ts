@@ -13,7 +13,7 @@ import Editor from 'tinymce/core/api/Editor';
 import Delay from 'tinymce/core/api/util/Delay';
 import { getMaxWidthSetting, getToolbarMode, getUiContainer, isStickyToolbar, isToolbarLocationTop, useFixedContainer, ToolbarMode } from '../api/Settings';
 import { UiFactoryBackstage } from '../backstage/Backstage';
-import ReadOnly from '../ReadOnly';
+import { setupReadonlyModeSwitch } from '../ReadOnly';
 import { ModeRenderInfo, RenderArgs, RenderUiComponents, RenderUiConfig } from '../Render';
 import OuterContainer from '../ui/general/OuterContainer';
 import { identifyMenus } from '../ui/menus/menubar/Integration';
@@ -175,7 +175,7 @@ const render = (editor: Editor, uiComponents: RenderUiComponents, rawUiConfig: R
     }
   });
 
-  ReadOnly.setupReadonlyModeSwitch(editor, uiComponents);
+  setupReadonlyModeSwitch(editor, uiComponents);
 
   return {
     editorContainer: uiComponents.outerContainer.element().dom()
