@@ -18,7 +18,7 @@ import { onControlAttached, onControlDetached, OnDestroy } from '../controls/Con
 import * as Icons from '../icons/Icons';
 import { componentRenderPipeline } from '../menus/item/build/CommonMenuItem';
 import * as MenuParts from '../menus/menu/MenuParts';
-import { receivingConfig } from '../../ReadOnly';
+import * as ReadOnly from '../../ReadOnly';
 
 export const updateMenuText = Id.generate('update-menu-text');
 export const updateMenuIcon = Id.generate('update-menu-icon');
@@ -117,7 +117,7 @@ const renderCommonDropdown = <T>(spec: CommonDropdownSpec<T>, prefix: string, sh
       dropdownBehaviours: Behaviour.derive([
         ...spec.dropdownBehaviours,
         DisablingConfigs.button(spec.disabled || sharedBackstage.providers.isReadonly()),
-        receivingConfig(),
+        ReadOnly.receivingConfig(),
         Unselecting.config({ }),
         Replacing.config({ }),
         AddEventsBehaviour.config('dropdown-events', [

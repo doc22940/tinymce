@@ -37,7 +37,7 @@ import * as Settings from '../core/color/Settings';
 import { renderPanelButton } from '../general/PanelButton';
 import { formChangeEvent } from '../general/FormEvents';
 import { Omit } from '../Omit';
-import { receivingConfig } from '../../ReadOnly';
+import * as ReadOnly from '../../ReadOnly';
 
 const colorInputChangeEvent = Id.generate('color-input-change');
 const colorSwatchChangeEvent = Id.generate('color-swatch-change');
@@ -66,7 +66,7 @@ export const renderColorInput = (spec: ColorInputSpec, sharedBackstage: UiFactor
 
     inputBehaviours: Behaviour.derive([
       Disabling.config({ disabled: sharedBackstage.providers.isReadonly() }),
-      receivingConfig(),
+      ReadOnly.receivingConfig(),
       Tabstopping.config({ }),
       Invalidating.config({
         invalidClass: 'tox-textbox-field-invalid',

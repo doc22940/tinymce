@@ -29,7 +29,7 @@ import { createTieredDataFrom } from '../../menus/menu/SingleMenu';
 import { ToolbarButtonClasses } from '../button/ButtonClasses';
 import { onToolbarButtonExecute, toolbarButtonEventOrder } from '../button/ButtonEvents';
 import { renderToolbarGroup, ToolbarGroup } from '../CommonToolbar';
-import { receivingConfig } from '../../../ReadOnly';
+import * as ReadOnly from '../../../ReadOnly';
 
 interface Specialisation<T> {
   toolbarButtonBehaviours: Array<Behaviour.NamedConfiguredBehaviour<Behaviour.BehaviourConfigSpec, Behaviour.BehaviourConfigDetail>>;
@@ -121,7 +121,7 @@ const renderCommonStructure = (icon: Option<string>, text: Option<string>, toolt
     buttonBehaviours: Behaviour.derive(
       [
         DisablingConfigs.toolbarButton(providersBackstage.isReadonly()),
-        receivingConfig(),
+        ReadOnly.receivingConfig(),
         AddEventsBehaviour.config('common-button-display-events', [
           AlloyEvents.run(NativeEvents.mousedown(), (button, se) => {
             se.event().prevent();
@@ -191,7 +191,7 @@ const renderCommonToolbarButton = <T>(spec: GeneralToolbarButton<T>, specialisat
           onControlDetached(specialisation, editorOffCell),
         ]),
         DisablingConfigs.toolbarButton(spec.disabled || providersBackstage.isReadonly()),
-        receivingConfig()
+        ReadOnly.receivingConfig()
       ].concat(specialisation.toolbarButtonBehaviours)
     )
   });
@@ -334,7 +334,7 @@ const renderSplitButton = (spec: Toolbar.ToolbarSplitButton, sharedBackstage: Ui
 
     splitDropdownBehaviours: Behaviour.derive([
       DisablingConfigs.splitButton(sharedBackstage.providers.isReadonly()),
-      receivingConfig(),
+      ReadOnly.receivingConfig(),
       AddEventsBehaviour.config('split-dropdown-events', [
         AlloyEvents.run(focusButtonEvent, Focusing.focus),
         onControlAttached(specialisation, editorOffCell),

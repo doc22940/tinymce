@@ -31,7 +31,7 @@ import * as Icons from '../icons/Icons';
 import { UiFactoryBackstageProviders } from '../../backstage/Backstage';
 import { formChangeEvent } from './FormEvents';
 import { Omit } from '../Omit';
-import { receivingConfig } from '../../ReadOnly';
+import * as ReadOnly from '../../ReadOnly';
 
 type CheckboxSpec = Omit<Types.Checkbox.Checkbox, 'type'>;
 
@@ -141,7 +141,7 @@ export const renderCheckbox = (spec: CheckboxSpec, providerBackstage: UiFactoryB
           AlloyFormField.getField(comp).each(Disabling.enable);
         }
       }),
-      receivingConfig()
+      ReadOnly.receivingConfig()
     ])
   });
 };

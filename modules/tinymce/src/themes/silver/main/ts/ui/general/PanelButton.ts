@@ -26,7 +26,7 @@ import { createPartialChoiceMenu } from '../menus/menu/MenuChoice';
 import { deriveMenuMovement } from '../menus/menu/MenuMovement';
 import ItemResponse from '../menus/item/ItemResponse';
 import { DisablingConfigs } from '../alien/DisablingConfigs';
-import { receivingConfig } from '../../ReadOnly';
+import * as ReadOnly from '../../ReadOnly';
 
 export interface SwatchPanelButtonSpec {
   dom: RawDomSchema;
@@ -48,7 +48,7 @@ export const renderPanelButton = (spec: SwatchPanelButtonSpec, sharedBackstage: 
 
     dropdownBehaviours: Behaviour.derive([
       DisablingConfigs.button(sharedBackstage.providers.isReadonly()),
-      receivingConfig(),
+      ReadOnly.receivingConfig(),
       Unselecting.config({}),
       Tabstopping.config({})
     ]),

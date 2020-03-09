@@ -14,7 +14,7 @@ import * as Channels from '../../Channels';
 import { renderIconButtonSpec } from '../general/Button';
 import { ToolbarButtonClasses } from './button/ButtonClasses';
 import { DisablingConfigs } from '../alien/DisablingConfigs';
-import { receivingConfig } from '../../ReadOnly';
+import * as ReadOnly from '../../ReadOnly';
 
 export interface MoreDrawerData {
   lazyMoreButton: () => AlloyComponent;
@@ -82,7 +82,7 @@ const getToolbarbehaviours = (toolbarSpec: ToolbarSpec, modeName) => {
 
   return Behaviour.derive([
     DisablingConfigs.toolbarButton(toolbarSpec.backstage.shared.providers.isReadonly()),
-    receivingConfig(),
+    ReadOnly.receivingConfig(),
     Keying.config({
       // Tabs between groups
       mode: modeName,

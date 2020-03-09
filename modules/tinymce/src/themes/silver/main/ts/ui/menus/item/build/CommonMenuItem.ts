@@ -14,7 +14,7 @@ import { menuItemEventOrder, onMenuItemExecute } from '../ItemEvents';
 import ItemResponse from '../ItemResponse';
 import { ItemStructure } from '../structure/ItemStructure';
 import { UiFactoryBackstageProviders } from 'tinymce/themes/silver/backstage/Backstage';
-import { receivingConfig } from 'tinymce/themes/silver/ReadOnly';
+import * as ReadOnly from 'tinymce/themes/silver/ReadOnly';
 
 export const componentRenderPipeline = (xs: Array<Option<AlloySpec>>) =>
 Arr.bind(xs, (o) => o.toArray());
@@ -47,7 +47,7 @@ const renderCommonItem = <T>(spec: CommonMenuItemSpec<T>, structure: ItemStructu
           onControlDetached(spec, editorOffCell)
         ]),
         DisablingConfigs.item(spec.disabled || providersbackstage.isReadonly()),
-        receivingConfig(),
+        ReadOnly.receivingConfig(),
         Replacing.config({ })
       ].concat(spec.itemBehaviours)
     )
@@ -76,7 +76,7 @@ const renderCommonChoice = <T>(spec: CommonCollectionItemSpec, structure: ItemSt
           AlloyEvents.run(NativeEvents.mouseover(), Focusing.focus)
         ]),
         DisablingConfigs.item(spec.disabled || providersbackstage.isReadonly()),
-        receivingConfig()
+        ReadOnly.receivingConfig()
       ]
     ),
     action: spec.onAction

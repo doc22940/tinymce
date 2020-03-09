@@ -27,7 +27,7 @@ import * as Icons from 'tinymce/themes/silver/ui/icons/Icons';
 
 import { formChangeEvent } from '../general/FormEvents';
 import { Omit } from '../Omit';
-import { receivingConfig } from '../../ReadOnly';
+import * as ReadOnly from '../../ReadOnly';
 
 type SelectBoxSpec = Omit<Types.SelectBox.SelectBox, 'type'>;
 
@@ -94,7 +94,7 @@ export const renderSelectBox = (spec: SelectBoxSpec, providersBackstage: UiFacto
           AlloyFormField.getField(comp).each(Disabling.enable);
         }
       }),
-      receivingConfig()
+      ReadOnly.receivingConfig()
     ])
   });
 };

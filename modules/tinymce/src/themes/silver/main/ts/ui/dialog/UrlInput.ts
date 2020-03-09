@@ -48,7 +48,7 @@ import {
 import ItemResponse from '../menus/item/ItemResponse';
 import { Omit } from '../Omit';
 import { renderButton } from '../general/Button';
-import { receivingConfig } from '../../ReadOnly';
+import * as ReadOnly from '../../ReadOnly';
 
 type UrlInputSpec = Omit<Types.UrlInput.UrlInput, 'type'>;
 
@@ -299,7 +299,7 @@ export const renderUrlInput = (spec: UrlInputSpec, backstage: UiFactoryBackstage
           memUrlPickerButton.getOpt(comp).each(Disabling.enable);
         }
       }),
-      receivingConfig(),
+      ReadOnly.receivingConfig(),
       AddEventsBehaviour.config('url-input-events', [
         AlloyEvents.run<CustomEvent>(browseUrlEvent, openUrlPicker)
       ])

@@ -34,7 +34,7 @@ import { ToolbarButtonClasses } from '../toolbar/button/ButtonClasses';
 import { Types } from '@ephox/bridge';
 import { Omit } from '../Omit';
 import { renderFormField } from '../alien/FieldLabeller';
-import { receivingConfig } from '../../ReadOnly';
+import * as ReadOnly from '../../ReadOnly';
 
 type ButtonSpec = Omit<Types.Button.Button, 'type'>;
 type FooterButtonSpec = Omit<Types.Dialog.DialogNormalButton, 'type'> | Omit<Types.Dialog.DialogMenuButton, 'type'>;
@@ -55,7 +55,7 @@ const renderCommonSpec = (spec, actionOpt: Option<(comp: AlloyComponent) => void
   const common = {
     buttonBehaviours: Behaviour.derive([
       DisablingConfigs.button(spec.disabled || providersBackstage.isReadonly()),
-      receivingConfig(),
+      ReadOnly.receivingConfig(),
       Tabstopping.config({}),
       AddEventsBehaviour.config('button press', [
         AlloyEvents.preventDefault('click'),

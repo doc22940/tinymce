@@ -20,7 +20,7 @@ import { formActionEvent, formResizeEvent } from '../general/FormEvents';
 import * as ItemClasses from '../menus/item/ItemClasses';
 import { deriveCollectionMovement } from '../menus/menu/MenuMovement';
 import { Omit } from '../Omit';
-import { receivingConfig } from '../../ReadOnly';
+import * as ReadOnly from '../../ReadOnly';
 
 type CollectionSpec = Omit<Types.Collection.Collection, 'type'>;
 
@@ -129,7 +129,7 @@ export const renderCollection = (spec: CollectionSpec, providersBackstage: UiFac
           Arr.map(SelectorFilter.descendants(comp.element(), '.tox-collection__item'), (childElm) => Attr.remove(childElm, 'aria-disabled'));
         }
       }),
-      receivingConfig(),
+      ReadOnly.receivingConfig(),
       Replacing.config({ }),
       Representing.config({
         store: {

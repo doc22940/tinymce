@@ -18,7 +18,7 @@ import { RepresentingConfigs } from '../alien/RepresentingConfigs';
 import { formChangeEvent } from '../general/FormEvents';
 import { Omit } from '../Omit';
 import { DisablingConfigs } from '../alien/DisablingConfigs';
-import { receivingConfig } from '../../ReadOnly';
+import * as ReadOnly from '../../ReadOnly';
 
 const extensionsAccepted = '.jpg,.jpeg,.png,.gif';
 
@@ -139,7 +139,7 @@ export const renderDropZone = (spec: DropZoneSpec, providersBackstage: UiFactory
               buttonBehaviours: Behaviour.derive([
                 Tabstopping.config({ }),
                 DisablingConfigs.button(providersBackstage.isReadonly()),
-                receivingConfig()
+                ReadOnly.receivingConfig()
               ])
             })
           ]

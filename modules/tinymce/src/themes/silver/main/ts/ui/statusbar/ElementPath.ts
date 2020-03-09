@@ -9,7 +9,7 @@ import { AddEventsBehaviour, AlloyEvents, Behaviour, Button, Keying, Replacing, 
 import { Arr } from '@ephox/katamari';
 import Editor from 'tinymce/core/api/Editor';
 import { UiFactoryBackstageProviders } from '../../backstage/Backstage';
-import { receivingConfig } from '../../ReadOnly';
+import * as ReadOnly from '../../ReadOnly';
 import { DisablingConfigs } from '../alien/DisablingConfigs';
 
 const isHidden = (elm) => {
@@ -54,7 +54,7 @@ const renderElementPath = (editor: Editor, settings, providersBackstage: UiFacto
         },
         buttonBehaviours: Behaviour.derive([
           DisablingConfigs.button(providersBackstage.isReadonly()),
-          receivingConfig()
+          ReadOnly.receivingConfig()
         ])
       });
     });
@@ -117,7 +117,7 @@ const renderElementPath = (editor: Editor, settings, providersBackstage: UiFacto
         selector: 'div[role=button]'
       }),
       Disabling.config({ disabled: providersBackstage.isReadonly() }),
-      receivingConfig(),
+      ReadOnly.receivingConfig(),
       Tabstopping.config({ }),
       Replacing.config({ }),
       AddEventsBehaviour.config('elementPathEvents', [
