@@ -6,7 +6,7 @@ import { Body, Attr, Class } from '@ephox/sugar';
 import Editor from 'tinymce/core/api/Editor';
 import EditorManager from 'tinymce/core/api/EditorManager';
 import Env from 'tinymce/core/api/Env';
-import HtmlUtils from '../module/test/HtmlUtils';
+import * as HtmlUtils from '../module/test/HtmlUtils';
 import URI from 'tinymce/core/api/util/URI';
 import Theme from 'tinymce/themes/silver/Theme';
 
@@ -407,22 +407,6 @@ UnitTest.asynctest('browser.tinymce.core.EditorTest', function (success, failure
   suite.test('kamer word boundaries', function (editor) {
     editor.setContent('<p>!\u200b!\u200b!</p>');
     LegacyUnit.equal(editor.getContent(), '<p>!\u200b!\u200b!</p>');
-  });
-
-  suite.test('Padd empty elements with br', function (editor) {
-    editor.settings.padd_empty_with_br = true;
-    editor.setContent('<p>a</p><p></p>');
-    LegacyUnit.equal(editor.getContent(), '<p>a</p><p><br /></p>');
-    delete editor.settings.padd_empty_with_br;
-  });
-
-  suite.test('Padd empty elements with br on insert at caret', function (editor) {
-    editor.settings.padd_empty_with_br = true;
-    editor.setContent('<p>a</p>');
-    LegacyUnit.setSelection(editor, 'p', 1);
-    editor.insertContent('<p>b</p><p></p>');
-    LegacyUnit.equal(editor.getContent(), '<p>a</p><p>b</p><p><br /></p>');
-    delete editor.settings.padd_empty_with_br;
   });
 
   suite.test('Preserve whitespace pre elements', function (editor) {

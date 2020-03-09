@@ -17,17 +17,17 @@ import Node from '../api/html/Node';
 import Schema, { SchemaSettings } from '../api/html/Schema';
 import Serializer, { SerializerSettings } from '../api/html/Serializer';
 import Tools from '../api/util/Tools';
-import Zwsp from '../text/Zwsp';
-import DomSerializerFilters from './DomSerializerFilters';
-import DomSerializerPreProcess from './DomSerializerPreProcess';
+import * as Zwsp from '../text/Zwsp';
+import * as DomSerializerFilters from './DomSerializerFilters';
+import * as DomSerializerPreProcess from './DomSerializerPreProcess';
 import { isWsPreserveElement } from './ElementType';
+import { WriterSettings } from '../api/html/Writer';
 
 export interface SerializerArgs extends ParserArgs {
   format?: string;
 }
 
-interface DomSerializerSettings extends DomParserSettings, SchemaSettings, SerializerSettings {
-  entity_encoding?: string;
+interface DomSerializerSettings extends DomParserSettings, WriterSettings, SchemaSettings, SerializerSettings {
   url_converter?: URLConverter;
   url_converter_scope?: {};
 }

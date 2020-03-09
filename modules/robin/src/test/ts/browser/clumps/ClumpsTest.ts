@@ -2,7 +2,7 @@ import { assert, UnitTest } from '@ephox/bedrock-client';
 import { DomUniverse } from '@ephox/boss';
 import { Arr } from '@ephox/katamari';
 import { Body, Compare, Element, Hierarchy, Insert, Remove } from '@ephox/sugar';
-import Clumps from 'ephox/robin/clumps/Clumps';
+import * as Clumps from 'ephox/robin/clumps/Clumps';
 
 UnitTest.test('ClumpsTest', function () {
   /* The purpose of this test is to take a large section of html and test dividing it into
@@ -37,8 +37,8 @@ UnitTest.test('ClumpsTest', function () {
     assert.eq(expected.length, actual.length, 'The length of Clumps was different. Expected: ' + expected.length + ', actual: ' + actual.length);
     Arr.each(expected, function (exp, i) {
       const act = actual[i];
-      assert.eq(true, Compare.eq(find(exp.start), act.start()));
-      assert.eq(true, Compare.eq(find(exp.end), act.finish()));
+      assert.eq(true, Compare.eq(find(exp.start), act.start));
+      assert.eq(true, Compare.eq(find(exp.end), act.finish));
     });
   };
 

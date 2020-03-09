@@ -75,14 +75,14 @@ const paletteFactory = (_translate: (key: string) => string, getClass: (key: str
     });
 
     const onChange = (slider: AlloyComponent, _thumb: AlloyComponent, value: number | SliderTypes.SliderValue) => {
-      AlloyTriggers.emitWith(slider, ColourEvents.paletteUpdate(), {
+      AlloyTriggers.emitWith(slider, ColourEvents.paletteUpdate, {
         value
       });
     };
 
     const onInit = (_slider: AlloyComponent, _thumb: AlloyComponent, spectrum: AlloyComponent, _value: number | SliderTypes.SliderValue) => {
       // Maybe make this initial value configurable?
-      setColour(spectrum.element().dom(), RgbaColour.toString(RgbaColour.red()));
+      setColour(spectrum.element().dom(), RgbaColour.toString(RgbaColour.red));
     };
 
     const sliderBehaviours = Behaviour.derive([

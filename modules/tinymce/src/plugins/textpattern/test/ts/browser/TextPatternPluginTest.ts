@@ -6,7 +6,7 @@ import { PlatformDetection } from '@ephox/sand';
 import TextpatternPlugin from 'tinymce/plugins/textpattern/Plugin';
 import Theme from 'tinymce/themes/silver/Theme';
 
-import Utils from '../module/test/Utils';
+import * as Utils from '../module/test/Utils';
 import { Unicode } from '@ephox/katamari';
 
 UnitTest.asynctest('browser.tinymce.plugins.textpattern.TextPatternPluginTest', (success, failure) => {
@@ -166,18 +166,6 @@ UnitTest.asynctest('browser.tinymce.plugins.textpattern.TextPatternPluginTest', 
       Step.label('block format with fragmented start sequence', GeneralSteps.sequence([
         Utils.sSetContentAndPressEnter(tinyApis, tinyActions, '<span data-mce-spellcheck="invalid">1</span>. a', 3, [0, 1]),
         tinyApis.sAssertContentPresence({ ol: 1, li: 2 })
-      ])),
-      Step.label('inline format with forced_root_block: false', GeneralSteps.sequence([
-        tinyApis.sSetSetting('forced_root_block', false),
-        Utils.sSetContentAndPressEnter(tinyApis, tinyActions, '**a**', 5, [0], false),
-        Step.label('Check bold format was applied', tinyApis.sAssertContentStructure(Utils.forcedRootBlockInlineStructHelper('strong', 'a'))),
-        tinyApis.sDeleteSetting('forced_root_block')
-      ])),
-      Step.label('block format with forced_root_block: false', GeneralSteps.sequence([
-        tinyApis.sSetSetting('forced_root_block', false),
-        Utils.sSetContentAndPressEnter(tinyApis, tinyActions, '# heading 1', 11, [0], false),
-        Step.label('Check heading format was applied', tinyApis.sAssertContentStructure(Utils.forcedRootBlockStructHelper('h1', ' heading 1'))),
-        tinyApis.sDeleteSetting('forced_root_block')
       ])),
       Step.label('getPatterns/setPatterns', Step.sync(function () {
         // Store the original patterns

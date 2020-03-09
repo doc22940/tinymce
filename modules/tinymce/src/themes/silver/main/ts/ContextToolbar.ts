@@ -17,11 +17,13 @@ import { getToolbarMode, ToolbarMode } from './api/Settings';
 import { hideContextToolbarEvent, showContextToolbarEvent } from './ui/context/ContextEditorEvents';
 import { ContextForm } from './ui/context/ContextForm';
 import { getContextToolbarBounds } from './ui/context/ContextToolbarBounds';
-import ToolbarLookup from './ui/context/ContextToolbarLookup';
-import ToolbarScopes, { ScopedToolbars } from './ui/context/ContextToolbarScopes';
+import * as ToolbarLookup from './ui/context/ContextToolbarLookup';
+import * as ToolbarScopes from './ui/context/ContextToolbarScopes';
 import { forwardSlideEvent, renderContextToolbar } from './ui/context/ContextUi';
 import { renderToolbar } from './ui/toolbar/CommonToolbar';
 import { identifyButtons } from './ui/toolbar/Integration';
+
+type ScopedToolbars = ToolbarScopes.ScopedToolbars;
 
 const bubbleSize = 12;
 const bubbleAlignments = {
@@ -245,6 +247,11 @@ const register = (editor: Editor, registryContextToolbars, sink, extras) => {
   };
 
   const launchContextToolbar = () => {
+    // Don't launch if the editor doesn't have focus
+    if (!editor.hasFocus()) {
+      return;
+    }
+
     const scopes = getScopes();
     ToolbarLookup.lookup(scopes, editor).fold(
       () => {
@@ -276,7 +283,7 @@ const register = (editor: Editor, registryContextToolbars, sink, extras) => {
     editor.on('ScrollContent ScrollWindow longpress', hideOrRepositionIfNecessary);
 
     // FIX: Make it go away when the action makes it go away. E.g. deleting a column deletes the table.
-    editor.on('click keyup SetContent ObjectResized ResizeEditor', (e) => {
+    editor.on('click keyup focus SetContent ObjectResized ResizeEditor', () => {
       // Fixing issue with chrome focus on img.
       resetTimer(
         Delay.setEditorTimeout(editor, launchContextToolbar, 0)
@@ -293,7 +300,7 @@ const register = (editor: Editor, registryContextToolbars, sink, extras) => {
     });
 
     editor.on('SwitchMode', () => {
-      if (editor.readonly) {
+      if (editor.mode.isReadOnly()) {
         lastAnchor.set(Option.none());
         InlineView.hide(contextbar);
       }
@@ -314,6 +321,6 @@ const register = (editor: Editor, registryContextToolbars, sink, extras) => {
   });
 };
 
-export default {
+export {
   register
 };

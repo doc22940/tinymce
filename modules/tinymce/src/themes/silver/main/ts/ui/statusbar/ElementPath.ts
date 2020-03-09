@@ -140,6 +140,6 @@ const renderElementPath = (editor: Editor, settings, providersBackstage: UiFacto
   };
 };
 
-export default {
+export {
   renderElementPath
 };

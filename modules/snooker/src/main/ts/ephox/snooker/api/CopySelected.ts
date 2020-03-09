@@ -1,19 +1,24 @@
-import { Arr, Obj, Struct } from '@ephox/katamari';
+import { Arr, Fun, Obj } from '@ephox/katamari';
 import { Attr, Css, Element, Insert, Remove, Selectors } from '@ephox/sugar';
-import DetailsList from '../model/DetailsList';
+import * as DetailsList from '../model/DetailsList';
 import { Warehouse } from '../model/Warehouse';
-import LayerSelector from '../util/LayerSelector';
+import * as LayerSelector from '../util/LayerSelector';
 import { DetailExt, RowData } from './Structs';
 import { HTMLElement } from '@ephox/dom-globals';
 
 interface StatsStruct {
-  minRow: () => number;
-  minCol: () => number;
-  maxRow: () => number;
-  maxCol: () => number;
+  readonly minRow: () => number;
+  readonly minCol: () => number;
+  readonly maxRow: () => number;
+  readonly maxCol: () => number;
 }
 
-const statsStruct: (minRow: number, minCol: number, maxRow: number, maxCol: number) => StatsStruct = Struct.immutable('minRow', 'minCol', 'maxRow', 'maxCol');
+const statsStruct = (minRow: number, minCol: number, maxRow: number, maxCol: number): StatsStruct => ({
+  minRow: Fun.constant(minRow),
+  minCol: Fun.constant(minCol),
+  maxRow: Fun.constant(maxRow),
+  maxCol: Fun.constant(maxCol)
+});
 
 const findSelectedStats = function (house: Warehouse, isSelected: (detail: DetailExt) => boolean) {
   const totalColumns = house.grid().columns();
@@ -121,6 +126,6 @@ const extract = function (table: Element, selectedSelector: string) {
   return table;
 };
 
-export default {
+export {
   extract
 };

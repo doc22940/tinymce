@@ -7,12 +7,12 @@
 
 import { document, Element, Event, Node } from '@ephox/dom-globals';
 import { Element as SugarElement, Selectors } from '@ephox/sugar';
-import NodeType from '../../dom/NodeType';
-import RangePoint from '../../dom/RangePoint';
+import * as NodeType from '../../dom/NodeType';
+import * as RangePoint from '../../dom/RangePoint';
 import Editor from '../Editor';
 import Env from '../Env';
 import * as Events from '../Events';
-import Settings from '../Settings';
+import * as Settings from '../Settings';
 import Delay from '../util/Delay';
 import Tools from '../util/Tools';
 import VK from '../util/VK';
@@ -485,7 +485,7 @@ const ControlSelection = (selection: Selection, editor: Editor): ControlSelectio
       }
     });
 
-    editor.on('nodechange ResizeEditor ResizeWindow drop FullscreenStateChanged', throttledUpdateResizeRect);
+    editor.on('nodechange ResizeEditor ResizeWindow ResizeContent drop FullscreenStateChanged', throttledUpdateResizeRect);
 
     // Update resize rect while typing in a table
     editor.on('keyup compositionend', function (e) {
